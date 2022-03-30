@@ -1,24 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import AddTodoForm from './components/AddTodoForm/AddTodoForm';
+import GlobalStyle from './GlobalStyles';
+import ToolBar from './components/ToolBar/ToolBar';
+import TodoList from './components/TodoList/TodoList';
+import { filteringTodos } from './utilities';
 
 function App() {
+  const [allTodos, setAllTodos] = useState([]);
+  const [filteredTodos, setFilteredTodos] = useState([]);
+  const [todoFilter, setTodoFilter] = useState('all');
+
+  useEffect(() => {
+    switch (todoFilter) {
+      case 'completed': {
+        setFilteredTodos(filteringTodos(allTodos, true));
+        break;
+      }
+      case 'uncompleted': {
+        setFilteredTodos(filteringTodos(allTodos, false));
+        break;
+      }
+      default: {
+        setFilteredTodos(allTodos);
+      }
+    }
+  }, [allTodos, todoFilter]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <GlobalStyle />
+      <AddTodoForm setAllTodos={setAllTodos} />
+      <ToolBar
+        setTodoFilter={setTodoFilter}
+        setFilteredTodos={setFilteredTodos}
+        todoFilter={todoFilter}
+        allTodos={allTodos}
+        setAllTodos={setAllTodos}
+      />
+      <TodoList filteredTodos={filteredTodos} setAllTodos={setAllTodos} />
+    </>
   );
 }
 
